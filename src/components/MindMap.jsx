@@ -1,56 +1,47 @@
-// src/components/MindMap.jsx
 import React, { useCallback } from 'react';
 import ReactFlow, {
-  MiniMap,
-  Controls,
   Background,
+  Controls,
+  MiniMap,
+  addEdge,
   useNodesState,
   useEdgesState,
-  addEdge,
 } from 'reactflow';
-
 import 'reactflow/dist/style.css';
 
-const initialNodes = [
-  {
-    id: '1',
-    position: { x: 0, y: 0 },
-    data: { label: 'Idea Principal' },
-    type: 'default',
-  },
-  {
-    id: '2',
-    position: { x: 200, y: 100 },
-    data: { label: 'Idea Secundaria' },
-  },
-];
+const MindMap = ({ nodes, edges, setNodes, onConnect, setSelectedNode }) => {
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) =>
+        nds.map((node) => {
+          const change = changes.find((c) => c.id === node.id);
+          if (!change) return node;
 
-const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2', label: 'relación' },
-];
-
-const MindMap = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+          if (change.type === 'position') {
+            return { ...node, position: change.position };
+          }
+          if (change.type === 'select') {
+            setSelectedNode(change.id);
+          }
+          return node;
+        })
+      );
+    },
+    [setNodes, setSelectedNode]
   );
 
   return (
-    <div style={{ height: 600 }}>
+    <div style={{ width: '100vw', height: '100vh' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         fitView
       >
-        <MiniMap />
+        <Background />
         <Controls />
-        <Background gap={12} />
+        <MiniMap />
       </ReactFlow>
     </div>
   );

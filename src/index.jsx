@@ -1,9 +1,11 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import MindMapApp from './MindMapApp';
-import './index.css';  // Aquí importamos los estilos globales
+import App from './App';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
-
-root.render(<MindMapApp />);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
